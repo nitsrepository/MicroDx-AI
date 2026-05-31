@@ -20,7 +20,10 @@ st.set_page_config(
 
 import streamlit as st
 
-GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
+try:
+    GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
+except:
+    from secret import GROQ_API_KEY
 
 
 client = Groq(api_key=GROQ_API_KEY)
