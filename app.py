@@ -176,6 +176,11 @@ st.markdown("""
 AI-Powered Infectious Disease Intelligence Platform
 </h4>
 """, unsafe_allow_html=True)
+language = st.selectbox(
+    "Select Language / भाषा चुनें",
+    ["English", "Hindi"]
+)
+st.write("Selected Language:", language)
 
 # Patient Information
 
@@ -395,8 +400,38 @@ IMPORTANT:
                 temperature=0.3,
                 max_tokens=1000
             )
-
             result = response.choices[0].message.content
+            
+            # Translate report to Hindi if selected 
+            if language == "Hindi":
+             translate_response = client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                 messages=[
+             {
+                "role": "system",
+                "content": "You are a professional medical translator. Translate medical reports into clear and professional Hindi."
+            },
+            {
+                "role": "user",
+                "content": f"""
+        Translate the following infectious disease screening report into professional Hindi.
+
+        Rules:
+        - Keep all disease names, organism names, laboratory test names and medical terms accurate.
+        - Use easy-to-understand Hindi.
+        - Preserve report formatting and numbering.
+
+        Report:
+
+        {result}
+        """
+                }
+             ],
+                  temperature=0.2,
+                  max_tokens=2000
+            )
+
+            result = translate_response.choices[0].message.content
 
             st.success("Analysis Completed")
             st.subheader("📋 Clinical Screening Report")
